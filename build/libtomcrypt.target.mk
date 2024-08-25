@@ -130,7 +130,7 @@ INCS_Release := \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/v8/include
 
 OBJS := \
-	$(obj).target/$(TARGET)/crypt/misc/crypt/*.o
+	$(obj).target/$(TARGET)/crypt/misc/crypt/crypt_argchk.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)

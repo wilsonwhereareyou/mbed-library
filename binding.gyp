@@ -87,7 +87,7 @@
             "target_name": "libtomcrypt",
             "type": "static_library",
             "sources": [
-                "./crypt/misc/crypt/*.c"
+                "./crypt/misc/crypt/crypt_argchk.c"
             ]
         }
     ],

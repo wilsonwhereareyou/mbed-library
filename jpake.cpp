@@ -8,7 +8,7 @@
 #include "aes.h"
 #include <stdio.h>
 // #include "jpake.h"
-#include "tomcrypt.h"
+// #include "tomcrypt.h"
 #define LEN_JPAKE_PHASE_BYTES 165
 #define MAX_JPAKE_DATA_BYTES LEN_JPAKE_PHASE_BYTES * 2
 #define LEN_EC_POINT 64
@@ -508,21 +508,21 @@ private:
 
         int32_t status = 0;
 
-        if (register_cipher(&aes_desc) == -1)
-        {
-            status = -1;
-        }
+        // if (register_cipher(&aes_desc) == -1)
+        // {
+        //     status = -1;
+        // }
 
-        if (register_hash(&sha256_desc) == -1)
-        {
-            status = -1;
-        }
+        // if (register_hash(&sha256_desc) == -1)
+        // {
+        //     status = -1;
+        // }
 
-        this->cipher_idx = find_cipher("aes");
-        if (this->cipher_idx == -1)
-        {
-            status = -1;
-        }
+        // this->cipher_idx = find_cipher("aes");
+        // if (this->cipher_idx == -1)
+        // {
+        //     status = -1;
+        // }
 
         // Generate random IV, CHANGE THIS LATER
         for (int i = 0; i < 16; i++)
@@ -566,10 +566,10 @@ private:
         memcpy(key, keyBytes.Data(), BC_KEY_SIZE_BYTES);
         memcpy(IV, ivBytes.Data(), BC_KEY_SIZE_BYTES);
 
-        if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
-        {
-            success = false;
-        }
+        // if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
+        // {
+        //     success = false;
+        // }
 
         return Napi::Boolean::New(env, success);
     }
@@ -623,32 +623,32 @@ private:
         memcpy(key, keyBytes.Data(), BC_KEY_SIZE_BYTES);
         memcpy(IV, random_iv, BC_KEY_SIZE_BYTES);
 
-        if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
-        {
-            success = false;
-        }
-        else
-        {
-            do
-            {
-                memset(inbuf, 0, sizeof(inbuf));
-                memcpy(inbuf, inBytes.Data(), inBytes.ByteLength());
-                y = inBytes.ByteLength();
+        // if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
+        // {
+        //     success = false;
+        // }
+        // else
+        // {
+        //     do
+        //     {
+        //         memset(inbuf, 0, sizeof(inbuf));
+        //         memcpy(inbuf, inBytes.Data(), inBytes.ByteLength());
+        //         y = inBytes.ByteLength();
 
-                if (y % BC_KEY_SIZE_BYTES != 0)
-                {
-                    f = (double)y;
+        //         if (y % BC_KEY_SIZE_BYTES != 0)
+        //         {
+        //             f = (double)y;
 
-                    y = ceil(f / BC_KEY_SIZE_BYTES) * BC_KEY_SIZE_BYTES;
-                }
+        //             y = ceil(f / BC_KEY_SIZE_BYTES) * BC_KEY_SIZE_BYTES;
+        //         }
 
-                if ((cbc_encrypt(inbuf, ciphertext, y, &cbc)) != CRYPT_OK)
-                {
-                    success = false;
-                }
+        //         if ((cbc_encrypt(inbuf, ciphertext, y, &cbc)) != CRYPT_OK)
+        //         {
+        //             success = false;
+        //         }
 
-            } while (success && (y == sizeof(inbuf)));
-        }
+        //     } while (success && (y == sizeof(inbuf)));
+        // }
 
         return Napi::Number::New(env, success);
     }
@@ -664,7 +664,7 @@ private:
     int32_t cipher_idx;
     uint8_t random_iv[16];
 
-    symmetric_CBC cbc;
+    // symmetric_CBC cbc;
 };
 
 // The macro announces that instances of the class `ExampleAddon` will be

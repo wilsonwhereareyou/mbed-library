@@ -12,13 +12,7 @@ Release/obj.target/jpakeaddon/jpake.o: ../jpake.cpp \
   ../mbedtls/include/mbedtls/ecp.h ../mbedtls/include/mbedtls/bignum.h \
   ../mbedtls/include/mbedtls/md.h ../mbedtls/include/mbedtls/ctr_drbg.h \
   ../mbedtls/include/mbedtls/aes.h ../mbedtls/include/mbedtls/entropy.h \
-  ../mbedtls/include/mbedtls/sha512.h ../crypt/headers/tomcrypt.h \
-  ../configs/tomcrypt_custom.h ../crypt/headers/tomcrypt_cfg.h \
-  ../crypt/headers/tomcrypt_macros.h ../crypt/headers/tomcrypt_cipher.h \
-  ../crypt/headers/tomcrypt_hash.h ../crypt/headers/tomcrypt_mac.h \
-  ../crypt/headers/tomcrypt_prng.h ../crypt/headers/tomcrypt_pk.h \
-  ../crypt/headers/tomcrypt_math.h ../crypt/headers/tomcrypt_misc.h \
-  ../crypt/headers/tomcrypt_argchk.h ../crypt/headers/tomcrypt_pkcs.h
+  ../mbedtls/include/mbedtls/sha512.h
 ../jpake.cpp:
 ../node_modules/node-addon-api/napi.h:
 /Users/ryanwilson/Library/Caches/node-gyp/18.16.1/include/node/node_api.h:
@@ -37,16 +31,3 @@ Release/obj.target/jpakeaddon/jpake.o: ../jpake.cpp \
 ../mbedtls/include/mbedtls/aes.h:
 ../mbedtls/include/mbedtls/entropy.h:
 ../mbedtls/include/mbedtls/sha512.h:
-../crypt/headers/tomcrypt.h:
-../configs/tomcrypt_custom.h:
-../crypt/headers/tomcrypt_cfg.h:
-../crypt/headers/tomcrypt_macros.h:
-../crypt/headers/tomcrypt_cipher.h:
-../crypt/headers/tomcrypt_hash.h:
-../crypt/headers/tomcrypt_mac.h:
-../crypt/headers/tomcrypt_prng.h:
-../crypt/headers/tomcrypt_pk.h:
-../crypt/headers/tomcrypt_math.h:
-../crypt/headers/tomcrypt_misc.h:
-../crypt/headers/tomcrypt_argchk.h:
-../crypt/headers/tomcrypt_pkcs.h:
