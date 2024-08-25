@@ -1,0 +1,15 @@
+{
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug",
+            "preLaunchTask": "npm: build:dev",
+            "program": "node",
+            "args": [
+                "server.js"
+            ],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

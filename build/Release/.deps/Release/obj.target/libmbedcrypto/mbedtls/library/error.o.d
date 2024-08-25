@@ -1,0 +1,87 @@
+cmd_Release/obj.target/libmbedcrypto/mbedtls/library/error.o := cc -o Release/obj.target/libmbedcrypto/mbedtls/library/error.o ../mbedtls/library/error.c '-DMBEDTLS_CONFIG_FILE="node-mbedtls-config.h"' '-DLTC_EASY=1' '-DLTC_DER=1' '-DNAPI_CPP_EXCEPTIONS=1' '-DNODE_GYP_MODULE_NAME=libmbedcrypto' '-DUSING_UV_SHARED=1' '-DUSING_V8_SHARED=1' '-DV8_DEPRECATION_WARNINGS=1' '-DV8_DEPRECATION_WARNINGS' '-DV8_IMMINENT_DEPRECATION_WARNINGS' '-D_GLIBCXX_USE_CXX11_ABI=1' '-D_DARWIN_USE_64_BIT_INODE=1' '-D_LARGEFILE_SOURCE' '-D_FILE_OFFSET_BITS=64' '-DOPENSSL_NO_PINSHARED' '-DOPENSSL_THREADS' -I../mbedtls/include -I../configs -I../mbedtls/include/mbedtls -I../crypt/headers -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/include/node -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/src -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/openssl/config -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/openssl/openssl/include -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/uv/include -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/zlib -I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/v8/include  -O3 -gdwarf-2 -fvisibility=hidden -mmacosx-version-min=10.15 -arch arm64 -Wall -Wendif-labels -W -Wno-unused-parameter -fno-strict-aliasing -MMD -MF ./Release/.deps/Release/obj.target/libmbedcrypto/mbedtls/library/error.o.d.raw   -c
+Release/obj.target/libmbedcrypto/mbedtls/library/error.o: \
+  ../mbedtls/library/error.c ../configs/node-mbedtls-config.h \
+  ../mbedtls/include/mbedtls/check_config.h \
+  ../mbedtls/include/mbedtls/error.h \
+  ../mbedtls/include/mbedtls/platform.h \
+  ../mbedtls/include/mbedtls/platform_time.h \
+  ../mbedtls/include/mbedtls/aes.h ../mbedtls/include/mbedtls/arc4.h \
+  ../mbedtls/include/mbedtls/asn1.h ../mbedtls/include/mbedtls/bignum.h \
+  ../mbedtls/include/mbedtls/base64.h \
+  ../mbedtls/include/mbedtls/blowfish.h \
+  ../mbedtls/include/mbedtls/platform_util.h \
+  ../mbedtls/include/mbedtls/camellia.h ../mbedtls/include/mbedtls/ccm.h \
+  ../mbedtls/include/mbedtls/cipher.h \
+  ../mbedtls/include/mbedtls/chacha20.h \
+  ../mbedtls/include/mbedtls/chachapoly.h \
+  ../mbedtls/include/mbedtls/poly1305.h \
+  ../mbedtls/include/mbedtls/ctr_drbg.h ../mbedtls/include/mbedtls/des.h \
+  ../mbedtls/include/mbedtls/dhm.h ../mbedtls/include/mbedtls/ecp.h \
+  ../mbedtls/include/mbedtls/entropy.h \
+  ../mbedtls/include/mbedtls/sha512.h ../mbedtls/include/mbedtls/gcm.h \
+  ../mbedtls/include/mbedtls/hkdf.h ../mbedtls/include/mbedtls/md.h \
+  ../mbedtls/include/mbedtls/hmac_drbg.h \
+  ../mbedtls/include/mbedtls/md5.h \
+  ../mbedtls/include/mbedtls/net_sockets.h \
+  ../mbedtls/include/mbedtls/ssl.h \
+  ../mbedtls/include/mbedtls/ssl_ciphersuites.h \
+  ../mbedtls/include/mbedtls/pk.h ../mbedtls/include/mbedtls/rsa.h \
+  ../mbedtls/include/mbedtls/ecdsa.h \
+  ../mbedtls/include/mbedtls/x509_crt.h \
+  ../mbedtls/include/mbedtls/x509.h \
+  ../mbedtls/include/mbedtls/x509_crl.h \
+  ../mbedtls/include/mbedtls/ecdh.h ../mbedtls/include/mbedtls/oid.h \
+  ../mbedtls/include/mbedtls/padlock.h ../mbedtls/include/mbedtls/pem.h \
+  ../mbedtls/include/mbedtls/pkcs12.h ../mbedtls/include/mbedtls/pkcs5.h \
+  ../mbedtls/include/mbedtls/ripemd160.h \
+  ../mbedtls/include/mbedtls/sha1.h ../mbedtls/include/mbedtls/sha256.h \
+  ../mbedtls/include/mbedtls/xtea.h
+../mbedtls/library/error.c:
+../configs/node-mbedtls-config.h:
+../mbedtls/include/mbedtls/check_config.h:
+../mbedtls/include/mbedtls/error.h:
+../mbedtls/include/mbedtls/platform.h:
+../mbedtls/include/mbedtls/platform_time.h:
+../mbedtls/include/mbedtls/aes.h:
+../mbedtls/include/mbedtls/arc4.h:
+../mbedtls/include/mbedtls/asn1.h:
+../mbedtls/include/mbedtls/bignum.h:
+../mbedtls/include/mbedtls/base64.h:
+../mbedtls/include/mbedtls/blowfish.h:
+../mbedtls/include/mbedtls/platform_util.h:
+../mbedtls/include/mbedtls/camellia.h:
+../mbedtls/include/mbedtls/ccm.h:
+../mbedtls/include/mbedtls/cipher.h:
+../mbedtls/include/mbedtls/chacha20.h:
+../mbedtls/include/mbedtls/chachapoly.h:
+../mbedtls/include/mbedtls/poly1305.h:
+../mbedtls/include/mbedtls/ctr_drbg.h:
+../mbedtls/include/mbedtls/des.h:
+../mbedtls/include/mbedtls/dhm.h:
+../mbedtls/include/mbedtls/ecp.h:
+../mbedtls/include/mbedtls/entropy.h:
+../mbedtls/include/mbedtls/sha512.h:
+../mbedtls/include/mbedtls/gcm.h:
+../mbedtls/include/mbedtls/hkdf.h:
+../mbedtls/include/mbedtls/md.h:
+../mbedtls/include/mbedtls/hmac_drbg.h:
+../mbedtls/include/mbedtls/md5.h:
+../mbedtls/include/mbedtls/net_sockets.h:
+../mbedtls/include/mbedtls/ssl.h:
+../mbedtls/include/mbedtls/ssl_ciphersuites.h:
+../mbedtls/include/mbedtls/pk.h:
+../mbedtls/include/mbedtls/rsa.h:
+../mbedtls/include/mbedtls/ecdsa.h:
+../mbedtls/include/mbedtls/x509_crt.h:
+../mbedtls/include/mbedtls/x509.h:
+../mbedtls/include/mbedtls/x509_crl.h:
+../mbedtls/include/mbedtls/ecdh.h:
+../mbedtls/include/mbedtls/oid.h:
+../mbedtls/include/mbedtls/padlock.h:
+../mbedtls/include/mbedtls/pem.h:
+../mbedtls/include/mbedtls/pkcs12.h:
+../mbedtls/include/mbedtls/pkcs5.h:
+../mbedtls/include/mbedtls/ripemd160.h:
+../mbedtls/include/mbedtls/sha1.h:
+../mbedtls/include/mbedtls/sha256.h:
+../mbedtls/include/mbedtls/xtea.h:
