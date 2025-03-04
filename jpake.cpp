@@ -8,7 +8,7 @@
 #include "aes.h"
 #include <stdio.h>
 // #include "jpake.h"
-// #include "tomcrypt.h"
+#include "tomcrypt.h"
 #define LEN_JPAKE_PHASE_BYTES 165
 #define MAX_JPAKE_DATA_BYTES LEN_JPAKE_PHASE_BYTES * 2
 #define LEN_EC_POINT 64
@@ -71,7 +71,8 @@ public:
                               InstanceMethod("DecryptChallenge", &JPakeAddon::DecryptChallenge),
                               InstanceMethod("SetupEnc", &JPakeAddon::SetupEnc),
                               InstanceMethod("InitializeEncryption", &JPakeAddon::InitializeEncryption),
-                              InstanceMethod("Encrypt", &JPakeAddon::Encrypt)});
+                              InstanceMethod("Encrypt", &JPakeAddon::Encrypt),
+                              InstanceMethod("Calc_CRC", &JPakeAddon::Calc_CRC)});
 
         // Initialize Context
         mbedtls_ecjpake_init(&jpakeContext);
@@ -508,21 +509,21 @@ private:
 
         int32_t status = 0;
 
-        // if (register_cipher(&aes_desc) == -1)
-        // {
-        //     status = -1;
-        // }
+        if (register_cipher(&aes_desc) == -1)
+        {
+            status = -1;
+        }
 
-        // if (register_hash(&sha256_desc) == -1)
-        // {
-        //     status = -1;
-        // }
+        if (register_hash(&sha256_desc) == -1)
+        {
+            status = -1;
+        }
 
-        // this->cipher_idx = find_cipher("aes");
-        // if (this->cipher_idx == -1)
-        // {
-        //     status = -1;
-        // }
+        this->cipher_idx = find_cipher("aes");
+        if (this->cipher_idx == -1)
+        {
+            status = -1;
+        }
 
         // Generate random IV, CHANGE THIS LATER
         for (int i = 0; i < 16; i++)
@@ -538,8 +539,8 @@ private:
         Napi::Env env = info.Env();
         bool success = true;
 
-        // This function takes 2 params (phase: Number, buffer: ArrayBuffer)
-        if (info.Length() != 2)
+        // This function takes 1 params ()
+        if (info.Length() != 1)
         {
             Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
             return env.Null();
@@ -551,25 +552,25 @@ private:
             return env.Null();
         }
 
-        if (!info[1].IsArrayBuffer())
-        {
-            Napi::Error::New(info.Env(), "Expected an Array").ThrowAsJavaScriptException();
-            return env.Null();
-        }
+        // if (!info[1].IsArrayBuffer())
+        // {
+        //     Napi::Error::New(info.Env(), "Expected an Array").ThrowAsJavaScriptException();
+        //     return env.Null();
+        // }
 
         Napi::ArrayBuffer keyBytes = info[0].As<Napi::ArrayBuffer>();
-        Napi::ArrayBuffer ivBytes = info[1].As<Napi::ArrayBuffer>();
+        // Napi::ArrayBuffer ivBytes = info[1].As<Napi::ArrayBuffer>();
 
         unsigned char key[BC_KEY_SIZE_BYTES];
-        unsigned char IV[BC_KEY_SIZE_BYTES];
+        // unsigned char IV[BC_KEY_SIZE_BYTES];
 
         memcpy(key, keyBytes.Data(), BC_KEY_SIZE_BYTES);
-        memcpy(IV, ivBytes.Data(), BC_KEY_SIZE_BYTES);
+        // memcpy(IV, ivBytes.Data(), BC_KEY_SIZE_BYTES);
 
-        // if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
-        // {
-        //     success = false;
-        // }
+        if ((cbc_start(this->cipher_idx, random_iv, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
+        {
+            success = false;
+        }
 
         return Napi::Boolean::New(env, success);
     }
@@ -623,34 +624,93 @@ private:
         memcpy(key, keyBytes.Data(), BC_KEY_SIZE_BYTES);
         memcpy(IV, random_iv, BC_KEY_SIZE_BYTES);
 
-        // if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
-        // {
-        //     success = false;
-        // }
-        // else
-        // {
-        //     do
-        //     {
-        //         memset(inbuf, 0, sizeof(inbuf));
-        //         memcpy(inbuf, inBytes.Data(), inBytes.ByteLength());
-        //         y = inBytes.ByteLength();
+        if ((cbc_start(this->cipher_idx, IV, key, BC_KEY_SIZE_BYTES, 0, &cbc)) != CRYPT_OK)
+        {
+            success = false;
+        }
+        else
+        {
+            do
+            {
+                memset(inbuf, 0, sizeof(inbuf));
+                memcpy(inbuf, inBytes.Data(), inBytes.ByteLength());
+                y = inBytes.ByteLength();
 
-        //         if (y % BC_KEY_SIZE_BYTES != 0)
-        //         {
-        //             f = (double)y;
+                if (y % BC_KEY_SIZE_BYTES != 0)
+                {
+                    f = (double)y;
 
-        //             y = ceil(f / BC_KEY_SIZE_BYTES) * BC_KEY_SIZE_BYTES;
-        //         }
+                    y = ceil(f / BC_KEY_SIZE_BYTES) * BC_KEY_SIZE_BYTES;
+                }
 
-        //         if ((cbc_encrypt(inbuf, ciphertext, y, &cbc)) != CRYPT_OK)
-        //         {
-        //             success = false;
-        //         }
+                if ((cbc_encrypt(inbuf, ciphertext, y, &cbc)) != CRYPT_OK)
+                {
+                    success = false;
+                }
 
-        //     } while (success && (y == sizeof(inbuf)));
-        // }
+            } while (success && (y == sizeof(inbuf)));
+        }
 
-        return Napi::Number::New(env, success);
+        return Napi::Boolean::New(env, success);
+    }
+
+    Napi::Value Calc_CRC(const Napi::CallbackInfo &info)
+    {
+        Napi::Env env = info.Env();
+        if (info.Length() != 2)
+        {
+            Napi::TypeError::New(env, "Wrong number of arguments").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[0].IsArrayBuffer())
+        {
+            Napi::TypeError::New(env, "Expected an Array").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        if (!info[1].IsNumber())
+        {
+            Napi::TypeError::New(env, "Expected Size as number").ThrowAsJavaScriptException();
+            return env.Null();
+        }
+
+        Napi::ArrayBuffer buf = info[0].As<Napi::ArrayBuffer>();
+        uint32_t size = info[1].As<Napi::Number>();
+        uint16_t calculatedCrc = 0;
+
+        calculatedCrc = calcCrc(calculatedCrc, (uint8_t *)buf.Data(), size);
+
+        unsigned char zeroes[2] = {0, 0};
+        calculatedCrc = calcCrc(calculatedCrc, zeroes, 2);
+
+        return Napi::Number::New(env, calculatedCrc);
+    }
+
+    uint16_t calcCrc(uint16_t sum, uint8_t *p, uint32_t len)
+    {
+        int32_t i;
+        uint8_t byte;
+
+        while (len--)
+        {
+            byte = *(p++);
+            for (i = 0; i < 8; ++i)
+            {
+                unsigned long osum = sum;
+                sum <<= 1;
+                if (byte & 0x80)
+                {
+                    sum |= 1;
+                }
+                if (osum & 0x8000)
+                {
+                    sum ^= 0x1021;
+                }
+                byte <<= 1;
+            }
+        }
+        return sum;
     }
 
     // Properties
@@ -664,7 +724,7 @@ private:
     int32_t cipher_idx;
     uint8_t random_iv[16];
 
-    // symmetric_CBC cbc;
+    symmetric_CBC cbc;
 };
 
 // The macro announces that instances of the class `ExampleAddon` will be

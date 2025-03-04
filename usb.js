@@ -1,6 +1,8 @@
 const { SerialPort } = require('serialport')
 const jpakeAddon = require('bindings')('jpakeaddon')
+// const SupportPackage = require("./supportbinding.js")
 const fs = require('node:fs')
+const { off } = require('node:process')
 
 const TANDEM_VID = "0483"
 const TANDEM_PID = "5740"
@@ -30,6 +32,7 @@ const KEY_CONFIRM_LENGTH = 8
 const KEY_CONFIRM_HOST = 0
 const KEY_CONFIRM_PUMP = 1
 const MAX_FILE_DATA = 1000
+const MSG_CARGO_MAX_BYTES = 246
 
 class Message {
     constructor(type, messageId, payload, checksum) {
@@ -47,16 +50,17 @@ let jpakeInfo = {
     appKey: new Uint8Array(APPKEY_SIZE)
 }
 
-let fileNameOne = ''
+//let fileNameOne = ''
 let tandemPort;
-let txBuff = new Uint8Array(330)
+let txBuff = new Uint8Array(255)
 let rxBuff = new Uint8Array(330)
 let JPakeRxBuffer = new Uint8Array(330)
 let JPakeTxBuffer = new Uint8Array(330)
 let messagesLog = []
 let decodedChallenge;
-let updateID = [52, 51, 51, 3]
-let keyConfirmed = false
+// let updateID = [52, 51, 51, 3]
+// let keyConfirmed = false
+// let supportPackage = new SupportPackage()
 
 const listPorts = () => {
     SerialPort.list().then((ports) => {
@@ -76,13 +80,11 @@ const getTandemDevice = async (cb) => {
                     path: port.path,
                     baudRate: 9600
                 })
+                
+                return tandemPort
             }
         })
-        if (cb) {
-            cb()
-        }
-        //sendNumpadCmd(tandemPort)
-        //console.log(tandemPort)
+        cb()
     })
 }
 
@@ -130,6 +132,20 @@ const sendNumpadCmd = async () => {
                 case KEY_CONFIRM_RESPONSE:
                     handleKeyConfirmResponse(message.payload)
                     break
+                // case CGM_SOFTWARE_UPDATE_FILE_STATUS:
+                //     if (message.payload[0] != 0) {
+                //         console.log("error: " + message.payload[0])
+                //     }
+                //     else {
+                //         if (bytesSent <= encryptedFileSize) {
+                //             sendFile()
+                //             //Gonna send another chunk
+                //         }
+                //         else {
+                //             console.log("done sending file")
+                //         }
+                //     }
+                //     break;
             }
         }
 
@@ -354,7 +370,7 @@ const handleJpakeResponse = (payload) => {
         if (jpakeInfo.step == JPAKE_REQUEST_DATA) {
             JPakeRxBuffer.set(payload.slice(JPAKE_RESPONSE_HEADER_SIZE))
             console.log('Got info from pump in phase 2')
-            console.dir(JPakeRxBuffer, { 'maxArrayLength': null })
+
 
             status = jpakeAddon.ValidateRoundMessage(jpakeInfo.phase, JPakeRxBuffer.buffer)
             console.log('Validate Phase 2, Status: ' + status)
@@ -445,17 +461,21 @@ const sendKeyChallenge = () => {
 }
 //KeyConfirmResponseMessage = hostRandomDataEncrypted(8), pumpRandomEncr(8), errorcode(1)
 const handleKeyConfirmResponse = (payload) => {
-
-
     let challengeDataEnc = new Uint8Array(16)
     challengeDataEnc.set(payload.slice(0, 16))
     // ChallengeDataEnc has the encrypted challenge data from the pump
     let errorcode = payload[16]
 
-    if (keyConfirmed == true) {
-        console.log('pump sent back final error: ' + errorcode)
-        return
-    }
+    // if (keyConfirmed == true) {
+    //     console.log('pump sent back final error: ' + errorcode)
+    //     // if (errorcode == 0) {
+    //     //     supportPackage.SetupEncryption(jpakeInfo.appKey.buffer)
+
+    //     //     sendFile()
+    //     // }
+
+    //     return
+    // }
     console.log('errorcode from pump: ' + errorcode)
     let status = 0
     let challengeDataDec = new Uint8Array(8)
@@ -540,26 +560,133 @@ const handleKeyConfirmResponse = (payload) => {
 
 }
 
-const sendFile = () => {
+// let fileBuffer
+// let fileSize = 0
+// let bytesRead = 0
+// let totalBytesRead = 0
+// let certType = 4
+// let bytesSent = 0
 
-    // 1: Get File to send and check if path is valid
-    let testBuf;
+// let sendFileMsgBuffer = new Uint8Array(246)
+// let encryptedFileBuffer = new Uint8Array(600)
+// let encryptedFileSize = 0
 
-    // 2: Read file buffer and then encrypt the file
+// const CGM_SOFTWARE_UPDATE_TRANSFER = 214
+const CGM_SOFTWARE_UPDATE_FILE_STATUS = 215
+// const sendFile = () => {
 
-    const data = fs.readFileSync('./01_DEX_ROOT_CA_CERT_embalmed.bin')
+//     if (totalBytesRead >= encryptedFileSize) {
+//         //console.log("total Bytes read for file: " + totalBytesRead)
+//         if (certType === 4) {
+//             certType = 0
+//         }
+//         else {
+//             certType++
+//         }
+//         if (certType === 0) {
 
-    // 3: Send the file to the pump in the necessary amount of messages
-    console.log(data)
-    testBuf = Uint8Array.from(data)
-    console.log(testBuf)
+//             fileBuffer = Uint8Array.from(fs.readFileSync('./certs/embalmed/device_cert.bin'))
+//             console.log("sending device cert")
+//         }
+//         else if (certType === 1) {
 
-    let status = jpakeAddon.SetupEnc()
-    console.log(status)
-}
+//             fileBuffer = Uint8Array.from(fs.readFileSync('./certs/embalmed/device_private_key.bin'))
+//             console.log("sending private key")
+//         }
+//         else if (certType === 2) {
+//             console.log("sending root cert")
+//             fileBuffer = Uint8Array.from(fs.readFileSync('./certs/embalmed/device_root_cert.bin'))
+//         }
+//         else if (certType === 3) {
+//             console.log("sending issuer cert")
+//             fileBuffer = Uint8Array.from(fs.readFileSync('./certs/embalmed/issuer_cert.bin'))
+//         }
+//         else {
 
-const validateFilePath = () => {
+//             console.log("done sending certs")
+//             return
+//         }
+//         bytesRead = 0
+//         totalBytesRead = 0
 
-}
+//         console.log("Data Type: " + certType)
+//         console.log("Unencrypted Length: " + fileBuffer.length)
+//         let setStatus = supportPackage.SetFileData(fileBuffer.buffer, fileBuffer.byteLength, certType)
+//         console.log("Set Status: " + setStatus)
+//         //Get all of the encrypted info
+//         let getStatus = supportPackage.GetFileData(encryptedFileBuffer.buffer)
+//         console.log("Get status: " + getStatus)
+//         let tempArr = new Uint16Array(encryptedFileBuffer.buffer)
 
-module.exports = { getTandemDevice, listPorts, sendNumpadCmd, sendFile }
+//         encryptedFileSize = tempArr[0]
+//         let crc = tempArr[1]
+//         console.log("CRC: " + crc)
+//         console.log("Encrypted Length: " + encryptedFileSize)
+
+
+//     }
+
+//     if (totalBytesRead + 241 >= encryptedFileSize) {
+//         bytesRead = encryptedFileSize - totalBytesRead
+//         totalBytesRead = encryptedFileSize
+//     }
+//     else {
+//         totalBytesRead += 241
+//         bytesRead = 241
+//     }
+
+//     console.log("Bytes read this message: " + bytesRead)
+//     console.log("total Bytes read for file: " + totalBytesRead)
+
+//     txBuff.fill(0)
+
+//     let offset = 0
+//     let checksum = 0
+//     txBuff[offset++] = USB_PACKET_DELIMITER
+//     txBuff[offset++] = CGM_SOFTWARE_UPDATE_TRANSFER
+//     txBuff[offset++] = bytesRead + 5
+//     txBuff[offset++] = encryptedFileBuffer[0]
+//     txBuff[offset++] = encryptedFileBuffer[1]
+//     txBuff[offset++] = encryptedFileBuffer[3]
+//     txBuff[offset++] = encryptedFileBuffer[2]
+//     txBuff[offset++] = encryptedFileBuffer[4]
+
+//     for (bytesSent; bytesSent < totalBytesRead; bytesSent++) {
+//         txBuff[offset++] = encryptedFileBuffer[bytesSent + 5]
+//     }
+
+//     console.log("Bytes sent: " + bytesSent)
+
+//     // add zero timestamp
+//     txBuff[offset++] = 0;
+//     txBuff[offset++] = 0;
+//     txBuff[offset++] = 0;
+//     txBuff[offset++] = 0;
+
+//     // add checksum
+//     checksum = calcChecksum(txBuff, 0, offset)
+//     txBuff[offset++] = (checksum >> 8)
+//     txBuff[offset++] = (checksum & 0xFF)
+
+//     // 3: Send the file to the pump in the necessary amount of messages
+
+//     console.log(txBuff)
+
+//     tandemPort.write(txBuff)
+
+// }
+
+// const testCRCValues = () => {
+//     let testfilebuffer = fs.readFileSync('./certs/embalmed/device_root_cert.bin')
+//     console.dir(testfilebuffer, { 'maxArrayLength': null })
+//     let status = supportPackage.SetFileData(testfilebuffer.buffer, 416, 2);
+//     let appKey = new Uint8Array(APPKEY_SIZE)
+//     let finalbuff = new Uint8Array(500)
+//     appKey[10] = 100
+//     supportPackage.SetupEncryption(appKey.buffer)
+//     status = supportPackage.GetFileData(finalbuff.buffer)
+//     //console.dir(finalbuff, { 'maxArrayLength': null })
+// }
+
+
+module.exports = { getTandemDevice, listPorts, sendNumpadCmd }

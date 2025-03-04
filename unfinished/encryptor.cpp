@@ -10,7 +10,7 @@ class EncryptorAddon : public Napi::Addon<EncryptorAddon>
 public:
     EncryptorAddon(Napi::Env env, Napi::Object exports)
     {
-        DefineAddon(exports, {InstanceMethod("Setup", &EncryptorAddon::Setup),
+        DefineAddon(exports, {InstanceMethod("Setup", &EncryptorAddon::SetupEnc),
                               InstanceMethod("InitializeEncryption", &EncryptorAddon::InitializeEncryption),
                               InstanceMethod("Encrypt", &EncryptorAddon::Encrypt)});
     }
