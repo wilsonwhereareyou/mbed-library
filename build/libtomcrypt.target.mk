@@ -4,8 +4,6 @@ TOOLSET := target
 TARGET := libtomcrypt
 DEFS_Debug := \
 	'-DMBEDTLS_CONFIG_FILE="node-mbedtls-config.h"' \
-	'-DLTC_EASY=1' \
-	'-DLTC_DER=1' \
 	'-DNAPI_CPP_EXCEPTIONS=1' \
 	'-DNODE_GYP_MODULE_NAME=libtomcrypt' \
 	'-DUSING_UV_SHARED=1' \
@@ -19,6 +17,7 @@ DEFS_Debug := \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DOPENSSL_NO_PINSHARED' \
 	'-DOPENSSL_THREADS' \
+	'-DLTC_RIJNDAEL=1' \
 	'-DDEBUG' \
 	'-D_DEBUG' \
 	'-DV8_ENABLE_CHECKS'
@@ -55,22 +54,17 @@ CFLAGS_OBJC_Debug :=
 CFLAGS_OBJCC_Debug :=
 
 INCS_Debug := \
-	-I$(srcdir)/mbedtls/include \
-	-I$(srcdir)/configs \
-	-I$(srcdir)/mbedtls/include/mbedtls \
-	-I$(srcdir)/crypt/headers \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/include/node \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/src \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/openssl/config \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/openssl/openssl/include \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/uv/include \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/zlib \
-	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/v8/include
+	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/v8/include \
+	-I$(srcdir)/libtomcrypt/src/headers
 
 DEFS_Release := \
 	'-DMBEDTLS_CONFIG_FILE="node-mbedtls-config.h"' \
-	'-DLTC_EASY=1' \
-	'-DLTC_DER=1' \
 	'-DNAPI_CPP_EXCEPTIONS=1' \
 	'-DNODE_GYP_MODULE_NAME=libtomcrypt' \
 	'-DUSING_UV_SHARED=1' \
@@ -83,7 +77,8 @@ DEFS_Release := \
 	'-D_LARGEFILE_SOURCE' \
 	'-D_FILE_OFFSET_BITS=64' \
 	'-DOPENSSL_NO_PINSHARED' \
-	'-DOPENSSL_THREADS'
+	'-DOPENSSL_THREADS' \
+	'-DLTC_RIJNDAEL=1'
 
 # Flags passed to all source files.
 CFLAGS_Release := \
@@ -117,20 +112,27 @@ CFLAGS_OBJC_Release :=
 CFLAGS_OBJCC_Release :=
 
 INCS_Release := \
-	-I$(srcdir)/mbedtls/include \
-	-I$(srcdir)/configs \
-	-I$(srcdir)/mbedtls/include/mbedtls \
-	-I$(srcdir)/crypt/headers \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/include/node \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/src \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/openssl/config \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/openssl/openssl/include \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/uv/include \
 	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/zlib \
-	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/v8/include
+	-I/Users/ryanwilson/Library/Caches/node-gyp/18.16.1/deps/v8/include \
+	-I$(srcdir)/libtomcrypt/src/headers
 
 OBJS := \
-	$(obj).target/$(TARGET)/crypt/misc/crypt/crypt_argchk.o
+	$(obj).target/$(TARGET)/libtomcrypt/src/ciphers/aes/aes_desc.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/ciphers/aes/aes.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/misc/crypt/crypt_register_cipher.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/misc/crypt/crypt_register_hash.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/misc/crypt/crypt_cipher_is_valid.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/misc/crypt/crypt_find_cipher.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/modes/cbc/cbc_start.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/modes/cbc/cbc_encrypt.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/misc/crypt/crypt_cipher_descriptor.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/misc/crypt/crypt_hash_descriptor.o \
+	$(obj).target/$(TARGET)/libtomcrypt/src/hashes/sha2/sha256.o
 
 # Add to the list of files we specially track dependencies for.
 all_deps += $(OBJS)

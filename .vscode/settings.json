@@ -1,4 +1,8 @@
 {
     "editor.wordWrap": "wordWrapColumn",
-    "editor.wordWrapColumn": 100
+    "editor.wordWrapColumn": 100,
+    "cmake.sourceDirectory": "/Users/ryanwilson/Coding/mbed-library/libtomcrypt/tests",
+    "files.associations": {
+        "vector": "cpp"
+    }
 }

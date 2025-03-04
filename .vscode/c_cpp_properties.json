@@ -4,13 +4,12 @@
             "name": "Mac",
             "includePath": [
                 "${default}",
-                "${workspaceFolder}/node_modules/**",
+                "${workspaceFolder}/node_modules/node-addon-api",
                 "${workspaceFolder}/mbedtls/include/mbedtls",
-                "${workspaceFolder}/crypt/headers"
+                "${workspaceFolder}/libtomcrypt/src/headers",
+                "${workspaceFolder}"
             ],
-            "defines": [
-                "LTC_EASY=1"
-            ],
+            "defines": [],
             "macFrameworkPath": [
                 "/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/System/Library/Frameworks"
             ],

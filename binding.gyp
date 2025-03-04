@@ -1,22 +1,21 @@
 {
     "target_defaults": {
-        "include_dirs": ["./mbedtls/include/", "./configs/", "./mbedtls/include/mbedtls/","./crypt/headers/"],
         "defines": [
             "MBEDTLS_CONFIG_FILE=\"node-mbedtls-config.h\"",
-                "LTC_EASY=1",
-                "LTC_DER=1",
             "NAPI_CPP_EXCEPTIONS=1"
         ]
     },
     "targets": [
         {
             "target_name": "jpakeaddon",
-            "dependencies": ["<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except", "libmbedcrypto", "libtomcrypt"],
+            "dependencies": ["<!(node -p \"require('node-addon-api').targets\"):node_addon_api_except", "libmbedcrypto","libtomcrypt", ],
+            "include_dirs": ["./libtomcrypt/src/headers/", "./mbedtls/include/mbedtls/","./mbedtls/include/", "./configs/"],
             "sources": [ "jpake.cpp" ],
         },
         {
             "target_name": "libmbedcrypto",
             "type": "static_library",
+            "include_dirs": ["./mbedtls/include/", "./configs/", "./mbedtls/include/mbedtls/"],
             "sources": [
                 "./mbedtls/library/aes.c",
                 "./mbedtls/library/aesni.c",
@@ -86,8 +85,23 @@
         {
             "target_name": "libtomcrypt",
             "type": "static_library",
+            "defines": [
+                "LTC_RIJNDAEL=1"
+            ],
+            "include_dirs": ["./libtomcrypt/src/headers/"],
             "sources": [
-                "./crypt/misc/crypt/crypt_argchk.c"
+                "./libtomcrypt/src/ciphers/aes/aes_desc.c",
+                "./libtomcrypt/src/ciphers/aes/aes.c",
+                "./libtomcrypt/src/misc/crypt/crypt_register_cipher.c",
+                "./libtomcrypt/src/misc/crypt/crypt_register_hash.c",
+                "./libtomcrypt/src/misc/crypt/crypt_cipher_is_valid.c",
+                "./libtomcrypt/src/misc/crypt/crypt_find_cipher.c",
+                "./libtomcrypt/src/modes/cbc/cbc_start.c",
+                "./libtomcrypt/src/modes/cbc/cbc_encrypt.c",
+                "./libtomcrypt/src/misc/crypt/crypt_cipher_descriptor.c",
+                "./libtomcrypt/src/misc/crypt/crypt_hash_descriptor.c",
+                "./libtomcrypt/src/hashes/sha2/sha256.c"
+
             ]
         }
     ],

@@ -3,4 +3,4 @@
 export builddir_name ?= ./build/.
 .PHONY: all
 all:
-	$(MAKE) libtomcrypt libmbedcrypto jpakeaddon
+	$(MAKE) libtomcrypt supportpackage libmbedcrypto newsupport jpakeaddon
